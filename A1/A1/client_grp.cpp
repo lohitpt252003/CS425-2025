@@ -20,6 +20,7 @@ std::mutex cout_mutex;
 void handle_server_messages(int server_socket) {
     char buffer[BUFFER_SIZE];
     while (true) {
+
         memset(buffer, 0, BUFFER_SIZE);
         int bytes_received = recv(server_socket, buffer, BUFFER_SIZE, 0);
         if (bytes_received <= 0) {
@@ -28,6 +29,7 @@ void handle_server_messages(int server_socket) {
             close(server_socket);
             exit(0);
         }
+
         std::lock_guard<std::mutex> lock(cout_mutex);
         std::cout << buffer << std::endl;
     }
@@ -60,7 +62,7 @@ int main() {
 
     memset(buffer, 0, BUFFER_SIZE);
     recv(client_socket, buffer, BUFFER_SIZE, 0); // Receive the message "Enter the user name" for the server
-    // You should have a line like this in the server.cpp code: send_message(client_socket, "Enter username: ");
+    
  
     std::cout << buffer;
     std::getline(std::cin, username);
@@ -84,7 +86,7 @@ int main() {
 
     // Start thread for receiving messages from server
     std::thread receive_thread(handle_server_messages, client_socket);
-    // We use detach because we want this thread to run in the background while the main thread continues running
+    // We will use detach because we want this thread to run in the background while the main thread continues running
     receive_thread.detach();
 
     // Send messages to the server
