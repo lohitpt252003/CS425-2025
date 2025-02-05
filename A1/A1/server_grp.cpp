@@ -26,6 +26,7 @@ std::unordered_map<std::string, std::unordered_set<int>> groups; // Maps group n
 void load_users(const std::string& filename) {
     std::ifstream file(filename);
     std::string line;
+
     while (std::getline(file, line)) {
         size_t colon = line.find(':');
         if (colon != std::string::npos) {
@@ -39,6 +40,7 @@ void load_users(const std::string& filename) {
 // Function to broadcast a message to all clients
 void broadcast_message(const std::string& message, int exclude_socket = -1) {
     std::lock_guard<std::mutex> lock(mtx);
+
     for (const auto& client : clients) {
         if (client.first != exclude_socket) {
             send(client.first, message.c_str(), message.size(), 0);
@@ -49,6 +51,7 @@ void broadcast_message(const std::string& message, int exclude_socket = -1) {
 // Function to send a private message to a specific user
 void send_private_message(const std::string& username, const std::string& message) {
     std::lock_guard<std::mutex> lock(mtx);
+
     for (const auto& client : clients) {
         if (client.second == username) {
             send(client.first, message.c_str(), message.size(), 0);
@@ -77,7 +80,8 @@ void handle_client(int client_socket) {
         if (users.find(username) != users.end() && users[username] == password) {
             send(client_socket, "Welcome to the chat server!", 27, 0);
             break;
-        } else {
+        }
+        else {
             send(client_socket, "Authentication failed.", 24, 0);
             close(client_socket);
             return;
@@ -95,6 +99,7 @@ void handle_client(int client_socket) {
 
     // Handle client messages
     while (true) {
+
         memset(buffer, 0, BUFFER_SIZE);
         int bytes_received = recv(client_socket, buffer, BUFFER_SIZE, 0);
         if (bytes_received <= 0) {
@@ -111,11 +116,13 @@ void handle_client(int client_socket) {
             iss >> recipient;
             std::getline(iss, msg);
             send_private_message(recipient, "[" + username + "]: " + msg);
-        } else if (command == "/broadcast") {
+        }
+        else if (command == "/broadcast") {
             std::string msg;
             std::getline(iss, msg);
             broadcast_message("[" + username + "]: " + msg + "", client_socket);
-        } else if (command == "/create_group") {
+        }
+        else if (command == "/create_group") {
             std::string group_name;
             iss >> group_name;
             {
@@ -132,7 +139,8 @@ void handle_client(int client_socket) {
                 if (groups.find(group_name) != groups.end()) {
                     groups[group_name].insert(client_socket);
                     send(client_socket, ("You joined the group " + group_name + ".").c_str(), BUFFER_SIZE, 0);
-                } else {
+                }
+                else {
                     send(client_socket, ("Group " + group_name + " does not exist.").c_str(), BUFFER_SIZE, 0);
                 }
             }
@@ -147,11 +155,13 @@ void handle_client(int client_socket) {
                     for (int socket : groups[group_name]) {
                         send(socket, ("[Group " + group_name + "]: " + msg + "").c_str(), BUFFER_SIZE, 0);
                     }
-                } else {
+                }
+                else {
                     send(client_socket, ("Group " + group_name + " does not exist.").c_str(), BUFFER_SIZE, 0);
                 }
             }
-        } else if (command == "/leave_group") {
+        }
+        else if (command == "/leave_group") {
             std::string group_name;
             iss >> group_name;
             {
@@ -159,13 +169,16 @@ void handle_client(int client_socket) {
                 if (groups.find(group_name) != groups.end()) {
                     groups[group_name].erase(client_socket);
                     send(client_socket, ("You left the group " + group_name + ".").c_str(), BUFFER_SIZE, 0);
-                } else {
+                }
+                else {
                     send(client_socket, ("Group " + group_name + " does not exist.").c_str(), BUFFER_SIZE, 0);
                 }
             }
-        } else if (command == "/exit") {
+        }
+        else if (command == "/exit") {
             break;
-        } else {
+        }
+        else {
             send(client_socket, "Unknown command.", 17, 0);
         }
     }
@@ -216,6 +229,7 @@ int main() {
 
     // Accept incoming connections
     while (true) {
+        
         sockaddr_in client_address{};
         socklen_t client_address_size = sizeof(client_address);
         int client_socket = accept(server_socket, (sockaddr*)&client_address, &client_address_size);
