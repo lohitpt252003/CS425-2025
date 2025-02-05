@@ -1,27 +1,35 @@
 ### **README.md**
+---
+
+[Github link of the Assignment1](https://github.com/lohitpt252003/CS425-2025.git)
+
+
+## **Group members**
+- LOHIT P TALAVAR (210564)
+- ANJALI MALOTH (210146)
 
 ---
 
 ## **Chat Server with Private Messages and Group Messaging**
 
-This project implements a multi-threaded chat server in C++ that supports private messaging, group communication, and user authentication. The server allows multiple clients to connect simultaneously, authenticate themselves, and communicate with each other using various commands.
+This project implements a multi-threaded chat server in C++ that supports private messaging, group communication, and user authentication. The server allows multiple clients to connect simultaneously, authenticate themselves, and communicate with each other using various commands like `/msg <username> <message>`, `/create_group <group_name>`, `etc`.
 
 ---
 
 ## **Features**
 1. **User Authentication**:
    - Clients must authenticate using a username and password stored in `users.txt`.
-   - Invalid credentials result in disconnection.
+   - It will throw an error if you provide invalid credentials.
 
 2. **Private Messaging**:
    - Users can send private messages to specific users using the `/msg` command.
 
 3. **Group Messaging**:
-   - Users can create, join, and leave groups.
+   - Users can create, join, and leave the groups.
    - Group messages can be sent to all members of a group using the `/group_msg` command.
 
 4. **Broadcast Messaging**:
-   - Users can broadcast messages to all connected clients using the `/broadcast` command.
+   - User can broadcast messages to all connected clients using the `/broadcast` command.
 
 5. **Thread Safety**:
    - The server uses mutexes to ensure thread-safe access to shared resources like the list of connected clients and groups.
@@ -30,7 +38,7 @@ This project implements a multi-threaded chat server in C++ that supports privat
 
 ## **How the Code Works**
 
-### **Server Code (`server.cpp`)**:
+### **Server Code (`server_grp.cpp`)**:
 1. **Data Structures**:
    - `clients`: Maps client sockets to usernames.
    - `users`: Stores usernames and passwords loaded from `users.txt`.
@@ -58,7 +66,7 @@ This project implements a multi-threaded chat server in C++ that supports privat
 
 ---
 
-### **Client Code (`client.cpp`)**:
+### **Client Code (`client_grp.cpp`)**:
 1. **Connection**:
    - The client connects to the server using the specified IP address and port.
 
@@ -76,16 +84,12 @@ This project implements a multi-threaded chat server in C++ that supports privat
 
 ## **How to Run the Server and Client**
 
-### **Prerequisites**
-- A C++ compiler (e.g., `g++`).
-- A terminal or command prompt.
-
 ### **Steps to Run**
 
 1. **Clone the Repository**:
    ```bash
-   git clone https://github.com/privacy-iitk/cs425-2025.git
-   cd cs425-2025/Homeworks/A1
+   git clone https://github.com/lohitpt252003/CS425-2025.git
+   cd A1/A1
    ```
 
 2. **Compile the Server and Client**:
@@ -93,22 +97,22 @@ This project implements a multi-threaded chat server in C++ that supports privat
      ```bash
      make
      ```
-   - Alternatively, compile manually:
+   - Or simply type the following:
      ```bash
-     g++ -std=c++17 -pthread -o server server.cpp
-     g++ -std=c++17 -o client client.cpp
+     g++ -std=c++17 -pthread -o server_grp server_grp.cpp
+     g++ -std=c++17 -o client_grp client_grp.cpp
      ```
 
 3. **Run the Server**:
    - Start the server on port `12345`:
      ```bash
-     ./server
+     ./server_grp
      ```
 
 4. **Run the Client**:
    - Open a new terminal and run the client:
      ```bash
-     ./client
+     ./client_grp
      ```
    - Follow the prompts to authenticate and start chatting.
 
@@ -125,10 +129,10 @@ This project implements a multi-threaded chat server in C++ that supports privat
 ---
 
 ## **File Descriptions**
-1. **`server.cpp`**:
+1. **`server_grp.cpp`**:
    - The main server code that handles client connections, authentication, and message processing.
 
-2. **`client.cpp`**:
+2. **`client_grp.cpp`**:
    - The client code that connects to the server and sends/receives messages.
 
 3. **`users.txt`**:
@@ -146,12 +150,12 @@ This project implements a multi-threaded chat server in C++ that supports privat
 
 1. **Start the Server**:
    ```bash
-   ./server
+   ./server_grp
    ```
 
 2. **Run the First Client**:
    ```bash
-   ./client
+   ./client_grp
    ```
    - Enter username: `alice`
    - Enter password: `password123`
@@ -159,7 +163,7 @@ This project implements a multi-threaded chat server in C++ that supports privat
 
 3. **Run the Second Client**:
    ```bash
-   ./client
+   ./client_grp
    ```
    - Enter username: `bob`
    - Enter password: `qwerty456`
@@ -194,30 +198,3 @@ This project implements a multi-threaded chat server in C++ that supports privat
      ```
 
 ---
-
-## **Troubleshooting**
-1. **Authentication Fails**:
-   - Ensure the username and password are correctly entered in `users.txt`.
-
-2. **Server Not Starting**:
-   - Check if port `12345` is available.
-   - Ensure no other application is using the same port.
-
-3. **Client Not Connecting**:
-   - Verify the server is running.
-   - Ensure the correct IP address and port are used.
-
----
-
-## **Contributors**
-- [Your Name]
-- [Your Teammates' Names]
-
----
-
-## **License**
-This project is licensed under the MIT License. See the `LICENSE` file for details.
-
----
-
-This `README.md` provides a clear and concise explanation of the project, its features, and how to run it. Let me know if you need further assistance!
