@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+
 import dns.message
 import dns.query
 import dns.rdatatype
@@ -91,7 +91,7 @@ def iterative_dns_lookup(domain):
                 stage = "AUTH"
         else:
             print(f"[ERROR] Query failed for {stage} server {ns_ip}")
-            return  # Stop resolution if a query fails
+            return  # Stop if a query fails
     
     print("[ERROR] Resolution failed.")  # Final failure message if no nameservers respond
 
