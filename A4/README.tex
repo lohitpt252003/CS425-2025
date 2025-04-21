@@ -1,0 +1,151 @@
+% README.tex
+\documentclass[12pt]{article}
+\usepackage[a4paper,margin=1in]{geometry}
+\usepackage{hyperref}
+\usepackage{parskip}
+
+\title{CS425: Computer Networks\\Assignment 4: Routing Protocols (DVR and LSR)}
+\author{Team Members: LOHIT P TALAVAR (210564), ANJALI MALOTH (210146)}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\section*{Objective}
+Implement Distance Vector Routing (DVR) and Link State Routing (LSR) algorithms in C++ by reading an adjacency‐matrix representation of a network and producing per‐node routing tables.
+
+\section*{Repository Structure}
+\begin{verbatim}
+.
+├── routing_sim.cpp     % C++ source implementing DVR and LSR
+├── Makefile            % (optional) build rules
+├── input1.txt          % sample adjacency matrix input
+├── input2.txt          % sample adjacency matrix input
+├── input3.txt          % sample adjacency matrix input
+├── input4.txt          % sample adjacency matrix input
+├── A4.pdf              % problem statement
+└── README.tex          % This is LaTeX documentation
+└── README.pdf          % This is documentation
+\end{verbatim}
+
+\section*{Prerequisites}
+\begin{itemize}
+  \item C++17‑compatible compiler (e.g. \texttt{g++})
+  \item Standard C++ library (no external dependencies)
+  \item Unix‑style shell (e.g. Bash) or equivalent
+\end{itemize}
+
+\newpage
+
+\section*{Compilation}
+\subsection*{Using Makefile}
+\begin{verbatim}
+make
+\end{verbatim}
+
+\subsection*{Manual}
+\begin{verbatim}
+g++ -std=c++17 routing_sim.cpp -o routing_sim 
+\end{verbatim}
+or
+\begin{verbatim}
+g++ routing_sim.cpp -o routing_sim
+\end{verbatim}
+
+\section*{Usage}
+\begin{verbatim}
+./routing_sim <input_file>
+\end{verbatim}
+\noindent\textbf{Example:}
+\begin{verbatim}
+./routing_sim inputfile.txt
+\end{verbatim}
+
+\section*{Input Format}
+\begin{enumerate}
+  \item First line: integer \(n\), number of nodes.
+  \item Next \(n\) lines: each contains \(n\) space‑separated integers (the adjacency matrix):
+    \begin{itemize}
+      \item Off‑diagonal 0 indicates no link (treated as infinite cost = 9999).
+      \item Value 9999 explicitly represents infinite cost.
+      \item Diagonal entries must be 0.
+    \end{itemize}
+\end{enumerate}
+
+\section*{Output Format}
+\subsection*{Distance Vector Routing (DVR)}
+\begin{verbatim}
+--- Distance Vector Routing Simulation ---
+--- DVR iteration k ---
+Node i Routing Table:
+Dest    Cost    Next Hop
+...
+--- DVR Final Tables ---
+\end{verbatim}
+
+\subsection*{Link State Routing (LSR)}
+\begin{verbatim}
+--- Link State Routing Simulation ---
+Instructor: Adithya Vadapalli TA Incharge: Rishit and Yugul
+CS425: Computer Networks A4: Routing Protocols (DVR and LSR)
+Node i Routing Table:
+Dest    Cost    Next Hop
+...
+\end{verbatim}
+
+\section*{Algorithm Overview}
+\subsection*{Distance Vector Routing}
+\begin{enumerate}
+  \item Initialize each node’s cost vector with direct link costs and next‑hop pointers.
+  \item Repeatedly exchange vectors with neighbors and update via Bellman‑Ford until convergence:
+  \[
+    \text{if } dist_u[v] + dist_v[d] < dist_u[d] \text{ then }
+      dist_u[d] = dist_u[v] + dist_v[d],\;
+      nextHop_u[d] = nextHop_u[v].
+  \]
+  \item Terminate when no changes occur.
+\end{enumerate}
+
+\subsection*{Link State Routing}
+\begin{enumerate}
+  \item Each node knows the full topology (adjacency matrix).
+  \item Run Dijkstra’s algorithm from each node to compute shortest paths.
+  \item Backtrack predecessor array to determine first‑hop next‑hops.
+\end{enumerate}
+
+\section*{Code Workflow}
+\subsection*{1. Reading the Graph}
+\begin{itemize}
+  \item \texttt{readGraph(const string\&)} opens the input file, reads \(n\), then the \(n\times n\) matrix.
+  \item Off‑diagonal zeros (\(i \neq j\)) are converted to \(\texttt{INF}=9999\); diagonal stays 0.
+\end{itemize}
+
+\subsection*{2. Distance Vector Routing (\texttt{simulateDVR})}
+\begin{itemize}
+  \item Initialize \(\texttt{dist}[i][j]\) to direct costs, and \(\texttt{nextHop}[i][j]=j\) when a link exists.
+  \item Iteratively “exchange” tables: for each node \(u\) and neighbor \(v\), relax
+    \[
+      dist_u[d] \;=\;\min(dist_u[d],\;dist_u[v]+dist_v[d]),
+    \]
+    updating \(\texttt{nextHop}_u[d]\) accordingly.
+  \item Repeat until no update; print tables each iteration and final.
+\end{itemize}
+
+\subsection*{3. Link State Routing (\texttt{simulateLSR})}
+\begin{itemize}
+  \item For each source node \(s\):
+    \begin{enumerate}
+      \item Initialize \(\texttt{dist}[s]=0\), others = INF; \(\texttt{prev}[]=-1\).
+      \item Run standard Dijkstra’s algorithm using the full adjacency matrix.
+      \item After computing \(\texttt{dist}[]\) and \(\texttt{prev}[]\), backtrack from each destination \(d\) to \(s\) to find the first hop.
+    \end{enumerate}
+  \item Print routing table for each \(s\).
+\end{itemize}
+
+\subsection*{4. Main Function}
+\begin{itemize}
+  \item Parses command‑line argument for input file.
+  \item Calls \texttt{readGraph}, then \texttt{simulateDVR} and \texttt{simulateLSR}.
+\end{itemize}
+
+\end{document}
